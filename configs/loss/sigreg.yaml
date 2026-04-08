@@ -1,0 +1,4 @@
+_target_: visreg.losses.SIGReg
+num_projections: 4096
+knots: 17
+t_max: 3.0

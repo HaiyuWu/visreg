@@ -1,0 +1,4 @@
+_target_: visreg.losses.VICReg
+var_weight: 25.0
+cov_weight: 1.0
+gamma: 1.0

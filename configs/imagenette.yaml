@@ -1,0 +1,47 @@
+# Training configuration for SSL on Imagenette (10 classes)
+
+defaults:
+  - loss: visreg
+  - _self_
+
+# Dataset
+dataset: imagenette
+
+# Model (simplified ViT for small dataset)
+model: vit_s
+pretrained: false
+
+# Loss
+lamb: 0.6
+proj_dim: 128
+
+aug:
+  backend: torchvision
+  cj_brightness: 0.8
+  cj_contrast: 0.8
+  cj_saturation: 0.8
+  cj_hue: 0.1
+
+# Data
+n_global: 4
+n_local: 0
+global_img_size: 128
+
+# Training
+bs: 64
+lr: 1e-3
+epochs: 800
+warmup_epochs: 1
+final_lr_div: 1000
+clip_grad_norm: 1.0
+
+# Checkpointing
+save_ckpt: false
+ckpt_dir: ./checkpoints
+
+# Masking
+disable_masking: false
+
+# Resume
+resume: null
+wandb_id: null

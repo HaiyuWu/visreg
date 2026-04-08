@@ -1,0 +1,2 @@
+_target_: visreg.losses.BarlowTwins
+lambda_off_diag: 0.0051

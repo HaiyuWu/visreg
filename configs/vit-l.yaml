@@ -1,0 +1,49 @@
+# Training configuration for ViT-L on ImageNet-1k
+
+defaults:
+  - loss: visreg
+  - _self_
+
+# Dataset
+dataset: imagenet
+
+# Model
+model: vit_l
+pretrained: false
+proj_gelu: true
+proj_dim: 384
+
+# Loss
+lamb: 0.8
+
+aug:
+  backend: torchvision
+  cj_brightness: 0.4
+  cj_contrast: 0.4
+  cj_saturation: 0.2
+  cj_hue: 0.05
+
+# Data
+n_global: 4
+n_local: 6
+global_img_size: 224
+local_img_size: 98
+
+# Training
+bs: 16 # per GPU
+lr: 8e-4
+epochs: 400
+warmup_epochs: 5
+final_lr_div: 1000
+clip_grad_norm: 1.0
+
+# Checkpointing
+save_ckpt: true
+ckpt_dir: ./checkpoints
+
+# Resume (set to checkpoint path to resume)
+resume: null
+
+# Wandb (set to run ID to resume logging)
+wandb_id: null
+

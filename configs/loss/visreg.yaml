@@ -1,0 +1,2 @@
+_target_: visreg.losses.VISReg
+num_projections: 4096

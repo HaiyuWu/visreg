@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "visreg"
+version = "0.0.1"
+dependencies = [
+  "torch>=2.8,<2.9",
+  "numpy",
+  "loguru",
+  "pytest",
+  "accelerate<2.0.0,>=1.2.1",
+  "fire>=0.7.0,<1.0.0",
+  "wandb",
+  "timm",
+  "kornia",
+  "hydra-core",
+  "datasets<4.0.0",
+  "pypdf2>=3.0.1",
+  "pdfminer-six>=20251107",
+  "matplotlib>=3.10.8",
+  "humanize>=4.14.0",
+  "rich>=14.2.0",
+  "medmnist>=3.0.2",
+  "pymupdf>=1.26.7",
+  "webdataset>=0.2.0",
+  "huggingface_hub",
+]
+requires-python = "==3.12.*"
+authors = [
+  {name = "Haiyu Wu", email = "haiyupersonal@gmail.com"},
+]
+maintainers = [
+  {name = "Haiyu Wu", email = "haiyupersonal@gmail.com"}
+]
+description = "ToDo"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
+classifiers = [
+  "Programming Language :: Python"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["visreg*", "downstream*"]
+
+[project.urls]
+Repository = "https://github.com/HaiyuWu/visreg"
+"Bug Tracker" = "https://github.com/HaiyuWu/visreg/issues"

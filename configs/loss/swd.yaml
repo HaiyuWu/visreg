@@ -1,0 +1,2 @@
+_target_: visreg.losses.SlicedWasserstein
+num_projections: 4096
