@@ -6,7 +6,7 @@
 
 <sup>1</sup>Altos Labs &emsp; <sup>2</sup>Brown University<!-- &emsp; <sup>3</sup>New York University -->
 
-<a href='#'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
+<a href='https://arxiv.org/abs/2606.02572v1'><img src='https://img.shields.io/badge/Paper-arXiv-red'></a>
 <a href='https://haiyuwu.github.io/visreg/'><img src='https://img.shields.io/badge/Project-Page-blue'></a>
 <a href='https://huggingface.co/BooBooWu/visreg'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Models-yellow'></a>
 <a href='https://creativecommons.org/licenses/by-nc/4.0/'><img src='https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey'></a>
