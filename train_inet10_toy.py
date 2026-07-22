@@ -147,7 +147,7 @@ def main(cfg: DictConfig):
     probe = nn.Sequential(nn.LayerNorm(net.embed_dim), nn.Linear(net.embed_dim, num_classes))
 
     if accelerator.state.num_processes > 1:
-        net = nn.SyncBatchNorm.convert_sync_batchnorm(net)
+        net = timm.layers.convert_sync_batchnorm(net)
     
     reg_loss_fn = instantiate(cfg.loss)
     

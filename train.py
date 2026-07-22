@@ -3,6 +3,7 @@ from visreg.utils import get_parameter_groups, fmt_lr, setup_run_dir, safe_token
 from visreg.models import ViTEncoder
 from visreg.data import build_dataset, build_kornia_aug_pipeline
 import torch, torch.nn as nn, torch.nn.functional as F
+import timm
 from torch.utils.data import DataLoader, IterableDataset
 import math
 import time
@@ -111,7 +112,7 @@ def main(cfg: DictConfig):
     probe = nn.Sequential(nn.LayerNorm(probe_input_dim), nn.Linear(probe_input_dim, num_classes))
 
     if accelerator.state.num_processes > 1:
-        net = nn.SyncBatchNorm.convert_sync_batchnorm(net)
+        net = timm.layers.convert_sync_batchnorm(net)
     
     reg_loss_fn = instantiate(cfg.loss)
     
