@@ -1,2 +1,5 @@
 _target_: visreg.losses.VISReg
 num_projections: 4096
+scale_weight: 1.0
+shape_weight: 1.0
+center_weight: 1.0

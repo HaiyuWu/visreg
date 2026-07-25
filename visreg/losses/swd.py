@@ -13,7 +13,7 @@ class SlicedWasserstein(nn.Module):
         W = W / (W.norm(dim=0, keepdim=True) + 1e-6)
         p = torch.matmul(z, W)
         p_sorted, _ = p.sort(dim=1)
-        quantiles = torch.arange(1, B + 1, device=z.device, dtype=z.dtype) / (B + 1)
+        quantiles = torch.arange(1, B + 1, device=z.device, dtype=torch.float32) / (B + 1)
         quantiles = quantiles.clamp(min=1e-4, max=1-1e-4)
         target = torch.distributions.Normal(0, 1).icdf(quantiles)
         target = target.view(1, B, 1)
