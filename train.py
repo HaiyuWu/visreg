@@ -118,7 +118,7 @@ def main(cfg: DictConfig):
     
     if accelerator.is_main_process:
         print(f"Initialized {method.upper()} loss")
-        print(f"Invariance: locals align to global mean (n_global={n_global}, detached)")
+        print(f"Invariance: locals align to global mean (n_global={n_global})")
 
     lr = cfg.lr
 
