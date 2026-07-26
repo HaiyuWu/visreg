@@ -34,6 +34,7 @@ This is the official implementation of **VISReg**, a heuristic-free and self-sup
 
 # News/Updates
 
+- [2026/7] Fix the inaccurate shape target due to precision loss in AMP.
 - [2026/6] Paper released on arXiv!
 - [2026/6] Added Kornia GPU augmentation pipeline and torch.compile support.
   - Note: the provided checkpoints were not trained with these two functions.
