@@ -34,6 +34,7 @@ This is the official implementation of **VISReg**, a heuristic-free and self-sup
 
 # News/Updates
 
+- [2026/8] ViT-L ImageNet-22k weights released. All checkpoints now ship the pretraining projection head.
 - [2026/7] Fix the inaccurate shape target due to precision loss in AMP.
 - [2026/6] Paper released on arXiv!
 - [2026/6] Added Kornia GPU augmentation pipeline and torch.compile support.
@@ -67,29 +68,50 @@ pip install -e .
 
 # :arrow_down: Download pretrained weights
 
-Pretrained weights (backbone-only, no projection head/optimizer/probe) can be downloaded from [HuggingFace](https://huggingface.co/BooBooWu/visreg) or using python:
+Pretrained weights (backbone + projection head, no optimizer/scheduler/probe/config) can be downloaded from [HuggingFace](https://huggingface.co/BooBooWu/visreg) or using python:
 
-| Checkpoint | Backbone | Params | Size |
-|------------|----------|--------|------|
-| `visreg-vit-b-inet1k.pth` | ViT-B/16 | 86M | 328M |
-| `visreg-vit-l-inet1k.pth` | ViT-L/14 | 304M | 1.2G |
+| Checkpoint | Key | Backbone | Pretraining data | `proj_dim` | Size |
+|------------|-----|----------|------------------|------------|------|
+| `visreg-vit-b-inet1k.pth` | `visreg_vit_b` | ViT-B/16 | ImageNet-1k | 256 | 351M |
+| `visreg-vit-l-inet1k.pth` | `visreg_vit_l` | ViT-L/14 | ImageNet-1k | 384 | 1.2G |
+| `visreg-vit-l-inet22k.pth` | `visreg_vit_l_inet22k` | ViT-L/14 | ImageNet-22k | 384 | 1.2G |
+
+Each file is a flat `state_dict` holding the timm backbone under unprefixed keys and the pretraining projection head under `proj.*`:
+
+```
+cls_token, pos_embed, patch_embed.*, blocks.*, norm.*   # timm ViT backbone
+proj.0 ... proj.8                                       # projection head (MLP: 2048-2048-proj_dim)
+```
 
 ```python
 from huggingface_hub import hf_hub_download
 
 hf_hub_download(repo_id="BooBooWu/visreg", filename="visreg-vit-b-inet1k.pth", local_dir="./")
 hf_hub_download(repo_id="BooBooWu/visreg", filename="visreg-vit-l-inet1k.pth", local_dir="./")
+hf_hub_download(repo_id="BooBooWu/visreg", filename="visreg-vit-l-inet22k.pth", local_dir="./")
 ```
 
-Load into a timm model:
+Load the backbone into a timm model (the `proj.*` keys have no counterpart there):
 
 ```python
 import timm
 import torch
 
+sd = torch.load("visreg-vit-b-inet1k.pth", weights_only=True)
 model = timm.create_model("vit_base_patch16_224", pretrained=False)
-model.load_state_dict(torch.load("visreg-vit-b-inet1k.pth", weights_only=True))
+model.load_state_dict({k: v for k, v in sd.items() if not k.startswith("proj.")})
 ```
+
+Or load the backbone together with the projection head, for fine-tuning or continued pretraining:
+
+```python
+from downstream.model_zoo import load_visreg_encoder
+
+encoder = load_visreg_encoder("visreg_vit_l_inet22k")
+emb, proj = encoder(images)
+```
+
+The evaluation scripts below also accept a key from the table directly (e.g. `--checkpoint visreg_vit_l_inet22k`) and download the weights on first use.
 
 # :floppy_disk: Download datasets
 

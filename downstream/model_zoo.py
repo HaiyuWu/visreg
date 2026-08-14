@@ -12,6 +12,8 @@ import timm
 from huggingface_hub import hf_hub_download
 from typing import Optional, Dict, Any
 
+from visreg.models import ViTEncoder
+
 logger = logging.getLogger(__name__)
 
 _CKPT_BASE = os.environ.get(
@@ -118,6 +120,16 @@ DATA2VEC_CKPTS = {
 VISREG_CKPTS = {
     "visreg_vit_b": "visreg-vit-b-inet1k.pth",
     "visreg_vit_l": "visreg-vit-l-inet1k.pth",
+    "visreg_vit_l_inet22k": "visreg-vit-l-inet22k.pth",
+}
+
+# Projection head geometry per checkpoint, used by load_visreg_encoder(). The activation
+# is parameterless, so it cannot be recovered from the weights: visreg_vit_b predates the
+# proj_gelu flag and was trained with ReLU, the ViT-L runs used GELU.
+VISREG_PROJ_CFG = {
+    "visreg_vit_b": {"model": "vit_b", "proj_dim": 256, "proj_gelu": False},
+    "visreg_vit_l": {"model": "vit_l", "proj_dim": 384, "proj_gelu": True},
+    "visreg_vit_l_inet22k": {"model": "vit_l", "proj_dim": 384, "proj_gelu": True},
 }
 
 # --- Checkpoint Loading Functions ---
@@ -292,16 +304,33 @@ def load_custom_checkpoint(model, ckpt_key_or_path: str, verbose: bool = True):
             k = k[len("_orig_mod."):]
         # Handle both "backbone." prefix and "module." prefix
         if k.startswith("backbone."):
-            new_state_dict[k[9:]] = v
+            k = k[9:]
         elif k.startswith("module."):
-            new_state_dict[k[7:]] = v
-        else:
-            new_state_dict[k] = v
+            k = k[7:]
+        if k.startswith("proj."):
+            continue  # Projection head, not part of a timm backbone
+        new_state_dict[k] = v
     
     msg = model.load_state_dict(new_state_dict, strict=False)
     if verbose:
         logger.info(f"Custom checkpoint loaded. Missing: {msg.missing_keys[:5]}... Unexpected: {msg.unexpected_keys[:5]}...")
     return model
+
+
+def load_visreg_encoder(ckpt_key: str, verbose: bool = True) -> ViTEncoder:
+    """Load a released checkpoint as a full ViTEncoder (backbone + projection head)."""
+    if ckpt_key not in VISREG_PROJ_CFG:
+        raise ValueError(f"Unknown checkpoint: {ckpt_key}. Available: {list(VISREG_PROJ_CFG)}")
+    cfg = VISREG_PROJ_CFG[ckpt_key]
+    ckpt_path = hf_hub_download(repo_id="BooBooWu/visreg", filename=VISREG_CKPTS[ckpt_key])
+    state_dict = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+    # Released files keep backbone keys unprefixed; ViTEncoder nests them under backbone.
+    remapped = {k if k.startswith("proj.") else f"backbone.{k}": v for k, v in state_dict.items()}
+    encoder = ViTEncoder(model_name=cfg["model"], proj_dim=cfg["proj_dim"], proj_gelu=cfg["proj_gelu"])
+    encoder.load_state_dict(remapped, strict=True)
+    if verbose:
+        logger.info(f"Loaded {ckpt_key}: embed_dim={encoder.embed_dim}, proj_dim={encoder.proj_dim}")
+    return encoder
 
 
 def get_model_type(model_name: str, pretrained: Optional[str] = None) -> str:
