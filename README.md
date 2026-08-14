@@ -300,10 +300,6 @@ Following iREPA, we train SiT-B/2 for 100K steps with guidance from DINO and VIS
 - Thanks [LeJEPA](https://github.com/galilai-group/lejepa) for providing such a good math-grounded theorem.
 - Thanks to [Hugging Face](https://huggingface.co/) for dataset and model hosting.
 
-# Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=HaiyuWu/visreg&type=Date)](https://star-history.com/#HaiyuWu/visreg&Date)
-
 # :page_facing_up: License
 
 This project (code and pretrained weights) is released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) for non-commercial use only.
