@@ -1,1 +1,1 @@
-Please go to [https://github.com/altos-labs/visreg](https://github.com/altos-labs/visreg) for code and model weights.
+Please go to [https://github.com/altoslabs/visreg](https://github.com/altoslabs/visreg) for code and model weights.
